@@ -512,9 +512,283 @@ OR => TRUE if any of the conditions separated by OR is TRUE
 SOME => TRUE if any of the subquery values meet the condition
 ```
 
+## SQL CREATE TABLE Statement
+```sql
+CREATE TABLE Persons (
+    PersonID int,
+    LastName varchar(255),
+    FirstName varchar(255),
+    Address varchar(255),
+    City varchar(255)
+);
+
+CREATE TABLE TestTable AS
+SELECT customername, contactname
+FROM customers;
+```
+
+## SQL DROP TABLE Statement
+The TRUNCATE TABLE statement is used to delete the data inside a table, but not the table itself.
+```sql
+DROP TABLE Shippers;
+TRUNCATE TABLE table_name;
+```
+
+## SQL ALTER TABLE Statement
+The ALTER TABLE statement is used to add, delete, or modify columns in an existing table.
+The ALTER TABLE statement is also used to add and drop various constraints on an existing table.
+```sql
+ALTER TABLE Customers
+ADD Email varchar(255);
+
+ALTER TABLE Customers
+DROP COLUMN Email;
+
+ALTER TABLE table_name
+RENAME COLUMN old_name to new_name;
+
+ALTER TABLE table_name
+ALTER COLUMN column_name datatype;
+
+ALTER TABLE Persons
+ALTER COLUMN DateOfBirth year;
+
+ALTER TABLE Persons
+DROP COLUMN DateOfBirth;
+```
+
+## SQL NOT NULL Constraint
+```sql 
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255) NOT NULL,
+    Age int
+);
+
+ALTER TABLE Persons
+ALTER COLUMN Age int NOT NULL;
+```
+
+## SQL UNIQUE Constraint
+The UNIQUE constraint ensures that all values in a column are different.
+A PRIMARY KEY constraint automatically has a UNIQUE constraint.
+However, you can have many UNIQUE constraints per table, but only one PRIMARY KEY constraint per table.
+```sql
+CREATE TABLE Persons (
+    ID int NOT NULL UNIQUE,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int
+);
+
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    CONSTRAINT UC_Person UNIQUE (ID,LastName)
+);
+
+ALTER TABLE Persons
+ADD UNIQUE (ID);
+
+ALTER TABLE Persons
+ADD CONSTRAINT UC_Person UNIQUE (ID,LastName);
+
+ALTER TABLE Persons
+DROP CONSTRAINT UC_Person;
+```
+
+## SQL PRIMARY KEY Constraint
+```sql
+CREATE TABLE Persons (
+    ID int NOT NULL PRIMARY KEY,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int
+);
+
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    CONSTRAINT PK_Person PRIMARY KEY (ID,LastName)
+);
+
+ALTER TABLE Persons
+ADD PRIMARY KEY (ID);
+
+ALTER TABLE Persons
+ADD CONSTRAINT PK_Person PRIMARY KEY (ID,LastName);
+
+ALTER TABLE Persons
+DROP CONSTRAINT PK_Person;
+```
+
+## SQL FOREIGN KEY Constraint
+A FOREIGN KEY is a field (or collection of fields) in one table, that refers to the PRIMARY KEY in another table.
+```sql
+CREATE TABLE Orders (
+    OrderID int NOT NULL PRIMARY KEY,
+    OrderNumber int NOT NULL,
+    PersonID int FOREIGN KEY REFERENCES Persons(PersonID)
+);
+
+CREATE TABLE Orders (
+    OrderID int NOT NULL,
+    OrderNumber int NOT NULL,
+    PersonID int,
+    PRIMARY KEY (OrderID),
+    CONSTRAINT FK_PersonOrder FOREIGN KEY (PersonID)
+    REFERENCES Persons(PersonID)
+);
+
+ALTER TABLE Orders
+ADD FOREIGN KEY (PersonID) REFERENCES Persons(PersonID);
+
+ALTER TABLE Orders
+ADD CONSTRAINT FK_PersonOrder
+FOREIGN KEY (PersonID) REFERENCES Persons(PersonID);
+
+ALTER TABLE Orders
+DROP CONSTRAINT FK_PersonOrder;
+```
+
+## SQL CHECK Constraint
+The CHECK constraint is used to limit the value range that can be placed in a column.
+```sql
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int CHECK (Age>=18)
+);
+
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    City varchar(255),
+    CONSTRAINT CHK_Person CHECK (Age>=18 AND City='Sandnes')
+);
+
+ALTER TABLE Persons
+ADD CHECK (Age>=18);
+
+ALTER TABLE Persons
+ADD CONSTRAINT CHK_PersonAge CHECK (Age>=18 AND City='Sandnes');
+
+ALTER TABLE Persons
+DROP CONSTRAINT CHK_PersonAge;
+```
+
+## SQL DEFAULT Constraint
+```sql 
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    City varchar(255) DEFAULT 'Sandnes'
+);
+
+CREATE TABLE Orders (
+    ID int NOT NULL,
+    OrderNumber int NOT NULL,
+    OrderDate date DEFAULT GETDATE()
+);
+
+ALTER TABLE Persons
+ADD CONSTRAINT df_City
+DEFAULT 'Sandnes' FOR City;
+
+ALTER TABLE Persons
+ALTER COLUMN City DROP DEFAULT;
+```
+
+## SQL CREATE INDEX Statement
+```sql
+CREATE INDEX index_name
+ON table_name (column1, column2, ...);
+
+CREATE INDEX idx_pname
+ON Persons (LastName, FirstName);
+
+DROP INDEX table_name.index_name;
+```
+
+## SQL AUTO INCREMENT Field
+ To specify that the "Personid" column should start at value 10 and increment by 5, change it to IDENTITY(10,5).
+```sql
+CREATE TABLE Persons (
+    Personid int IDENTITY(1,1) PRIMARY KEY,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int
+);
+```
+
+## SQL Dates
+SQL Server comes with the following data types for storing a date or a date/time value in the database:
+```sql
+DATE - format YYYY-MM-DD
+DATETIME - format: YYYY-MM-DD HH:MI:SS
+SMALLDATETIME - format: YYYY-MM-DD HH:MI:SS
+TIMESTAMP - format: a unique number
+```
+
+## SQL Views
+
+```sql
+CREATE VIEW [Brazil Customers] AS
+SELECT CustomerName, ContactName
+FROM Customers
+WHERE Country = 'Brazil';
+
+SELECT * FROM [Brazil Customers];
+
+CREATE VIEW [Products Above Average Price] AS
+SELECT ProductName, Price
+FROM Products
+WHERE Price > (SELECT AVG(Price) FROM Products);
+
+SELECT * FROM [Products Above Average Price];
+
+
+CREATE OR REPLACE VIEW [Brazil Customers] AS
+SELECT CustomerName, ContactName, City
+FROM Customers
+WHERE Country = 'Brazil';
+
+DROP VIEW [Brazil Customers];
+```
+
 ##
 ```sql
 
+```
+
+##
+```sql
+
+```
+
+##
+```sql
+
+```
+
+##
+```sql
+
+```
+
+##
+```sql
+ 
 ```
 
 ##
@@ -594,91 +868,6 @@ SOME => TRUE if any of the subquery values meet the condition
 
 ##
 ```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
-```
-
-##
-```sql
-
+ 
 ```
 
